@@ -52,7 +52,7 @@ class TransactionsController extends Controller
     public function createTransaction(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'book_id' => 'required|exists:books,book_id', // ✅ this is correct
+            'book_id' => 'required|exists:books,book_id',
             'borrower_name'  => 'required|string|max:255',
             'borrower_email' => 'required|email|max:255',
             'borrow_date'    => 'required|date',
@@ -69,14 +69,19 @@ class TransactionsController extends Controller
             ], 422);
         }
 
+        // Create the transaction
         $transaction = Transactions::create($request->all());
+
+        // Update book status to "borrowed"
+        $transaction->book()->update(['status' => 'borrowed']);
 
         return response()->json([
             'success' => true,
-            'message' => 'Transaction created successfully.',
+            'message' => 'Transaction created and book status updated to borrowed.',
             'data'    => $transaction->load('book'),
         ]);
     }
+
 
 
     /**
@@ -94,13 +99,8 @@ class TransactionsController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'book_id'        => 'sometimes|exists:books,book_id',
-            'borrower_name'  => 'sometimes|string|max:255',
-            'borrower_email' => 'sometimes|email|max:255',
-            'borrow_date'    => 'sometimes|date',
-            'due_date'       => 'sometimes|date|after_or_equal:borrow_date',
-            'return_date'    => 'nullable|date|after_or_equal:borrow_date',
-            'status'         => 'nullable|string|in:borrowed,returned,overdue',
+            'return_date' => 'nullable|date|after_or_equal:borrow_date',
+            'status'      => 'nullable|string|in:borrowed,returned,overdue',
         ]);
 
         if ($validator->fails()) {
@@ -113,12 +113,18 @@ class TransactionsController extends Controller
 
         $transaction->update($request->all());
 
+        // If transaction is returned, update book status to Available
+        if (isset($request->status) && $request->status === 'returned') {
+            $transaction->book()->update(['status' => 'Available']);
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Transaction updated successfully.',
             'data'    => $transaction->load('book'),
         ]);
     }
+
 
     /**
      * Remove the specified transaction.

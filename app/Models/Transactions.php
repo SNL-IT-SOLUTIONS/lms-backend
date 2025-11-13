@@ -12,6 +12,8 @@ class Transactions extends Model
     // Optional if your table name is standard "transactions"
     protected $table = 'transactions';
 
+    protected $primaryKey = 'transaction_id';
+
     // Allow mass assignment for these columns
     protected $fillable = [
         'book_id',
