@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
+use App\Models\Categories;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
@@ -10,10 +10,13 @@ use Illuminate\Support\Facades\Log;
 class CategoriesController extends Controller
 {
     // ✅ List all categories
+    // ✅ List all non-archived categories
     public function listCategories()
     {
         try {
-            $categories = Category::orderBy('created_at', 'desc')->get();
+            $categories = Categories::where('is_archived', false)
+                ->orderBy('created_at', 'desc')
+                ->get();
 
             return response()->json([
                 'success' => true,
@@ -29,11 +32,13 @@ class CategoriesController extends Controller
         }
     }
 
-    // ✅ Get single category
+    // ✅ Get single non-archived category
     public function getCategory($id)
     {
         try {
-            $category = Category::find($id);
+            $category = Categories::where('id', $id)
+                ->where('is_archived', false)
+                ->first();
 
             if (!$category) {
                 return response()->json([
@@ -56,6 +61,7 @@ class CategoriesController extends Controller
         }
     }
 
+
     // ✅ Create a new category
     public function createCategory(Request $request)
     {
@@ -74,7 +80,7 @@ class CategoriesController extends Controller
                 ], 422);
             }
 
-            $category = Category::create([
+            $category = Categories::create([
                 'category_name'        => $request->category_name,
                 'category_description' => $request->category_description,
                 'who_edited'           => $request->who_edited,
@@ -99,7 +105,7 @@ class CategoriesController extends Controller
     public function updateCategory(Request $request, $id)
     {
         try {
-            $category = Category::find($id);
+            $category = Categories::find($id);
             if (!$category) {
                 return response()->json([
                     'success' => false,
@@ -142,11 +148,11 @@ class CategoriesController extends Controller
         }
     }
 
-    // ✅ Delete a category
+    // ✅ Soft-delete a category
     public function deleteCategory($id)
     {
         try {
-            $category = Category::find($id);
+            $category = Categories::find($id);
             if (!$category) {
                 return response()->json([
                     'success' => false,
@@ -154,17 +160,19 @@ class CategoriesController extends Controller
                 ], 404);
             }
 
-            $category->delete();
+            // Soft delete by setting is_archived = true
+            $category->is_archived = true;
+            $category->save();
 
             return response()->json([
                 'success' => true,
-                'message' => 'Category deleted successfully.',
+                'message' => 'Category archived successfully.',
             ]);
         } catch (\Exception $e) {
-            Log::error('Error deleting category: ' . $e->getMessage());
+            Log::error('Error archiving category: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to delete category.',
+                'message' => 'Failed to archive category.',
                 'error'   => $e->getMessage(),
             ], 500);
         }

@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BaseController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoriesController;
 
 
 /*
@@ -23,7 +24,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
 //CATEGORIES
-Route::get('/categories', [BaseController::class, 'listCategories']);
-Route::get('/categories/{id}', [BaseController::class, 'getCategory']);
-Route::post('/categories', [BaseController::class, 'createCategory']);
-Route::put('/categories/{id}', [BaseController::class, 'updateCategory']);
+Route::get('/categories', [CategoriesController::class, 'listCategories']);
+Route::get('/categories/{id}', [CategoriesController::class, 'getCategory']);
+Route::post('/create/categories', [CategoriesController::class, 'createCategory']);
+Route::post('/update/categories/{id}', [CategoriesController::class, 'updateCategory']);
