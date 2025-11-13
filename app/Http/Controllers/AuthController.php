@@ -10,7 +10,7 @@ use App\Models\User;
 
 class AuthController extends Controller
 {
-    // 🔐 LOGIN
+    // LOGIN
     public function login(Request $request)
     {
         try {
@@ -59,7 +59,7 @@ class AuthController extends Controller
         }
     }
 
-    // 🚪 LOGOUT
+    // LOGOUT
     public function logout(Request $request)
     {
         try {
