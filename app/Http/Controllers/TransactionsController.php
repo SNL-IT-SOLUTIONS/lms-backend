@@ -13,17 +13,34 @@ class TransactionsController extends Controller
      */
     public function listTransactions(Request $request)
     {
-        // Get the per-page value from query, default to 10
         $perPage = $request->input('per_page', 10);
+        $search  = $request->input('search');
+        $status  = $request->input('status');
 
-        $transactions = Transactions::with('book')
-            ->orderBy('borrow_date', 'desc')
+        $query = Transactions::with('book');
+
+        // Apply search
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('borrower_name', 'like', "%{$search}%")
+                    ->orWhereHas('book', function ($q2) use ($search) {
+                        $q2->where('title', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        // Filter by status
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        $transactions = $query->orderBy('borrow_date', 'desc')
             ->paginate($perPage);
 
         return response()->json([
             'success' => true,
             'message' => 'Transactions retrieved successfully.',
-            'data'    => $transactions->items(), // actual data for current page
+            'data'    => $transactions->items(),
             'pagination' => [
                 'total' => $transactions->total(),
                 'per_page' => $transactions->perPage(),
@@ -32,6 +49,7 @@ class TransactionsController extends Controller
             ],
         ]);
     }
+
 
 
 
