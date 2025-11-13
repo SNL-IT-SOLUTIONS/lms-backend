@@ -13,7 +13,7 @@ class Books extends Model
     protected $table = 'books';
 
     // ✅ Primary key (optional if Laravel default 'id' is used)
-    protected $primaryKey = 'bookid';
+    protected $primaryKey = 'book_id';
 
     // ✅ Fillable fields
     protected $fillable = [

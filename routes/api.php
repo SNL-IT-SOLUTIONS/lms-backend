@@ -6,6 +6,7 @@ use App\Http\Controllers\BaseController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\BooksController;
+use App\Http\Controllers\TransactionsController;
 
 
 /*
@@ -38,3 +39,11 @@ Route::get('/books/{id}', [BooksController::class, 'getBookById']);
 Route::post('/create/books', [BooksController::class, 'createBook']);
 Route::post('/update/books/{id}', [BooksController::class, 'updateBook']);
 Route::post('/archive/books/{id}', [BooksController::class, 'archiveBook']);
+
+
+//Transactions
+Route::get('/transactions', [TransactionsController::class, 'listTransactions']);
+Route::get('/transactions/{id}', [TransactionsController::class, 'getTransactionById']);
+Route::post('/create/transactions', [TransactionsController::class, 'createTransaction']);
+Route::post('/update/transactions/{id}', [TransactionsController::class, 'updateTransaction']);
+Route::post('/archive/transactions/{id}', [TransactionsController::class, 'archiveTransaction']);
