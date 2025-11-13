@@ -18,8 +18,14 @@ class BooksController extends Controller
         try {
             $perPage = $request->input('per_page', 10); // Default 10 per page
             $search  = $request->input('search');
+            $categoryId = $request->input('category_id');
 
             $query = Books::where('is_archived', false);
+
+            // Filter by category if provided
+            if ($categoryId) {
+                $query->where('category_id', $categoryId);
+            }
 
             // Apply search if provided
             if ($search) {
@@ -45,12 +51,10 @@ class BooksController extends Controller
                     'per_page' => $books->perPage(),
                     'current_page' => $books->currentPage(),
                     'last_page' => $books->lastPage(),
-                    'from' => $books->firstItem(),
-                    'to' => $books->lastItem(),
                 ],
             ]);
         } catch (\Exception $e) {
-            \Log::error('Error fetching books: ' . $e->getMessage());
+            Log::error('Error fetching books: ' . $e->getMessage());
 
             return response()->json([
                 'success' => false,
@@ -59,6 +63,7 @@ class BooksController extends Controller
             ], 500);
         }
     }
+
 
 
     //======================
