@@ -6,8 +6,10 @@ use App\Http\Controllers\BaseController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\BooksController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TransactionsController;
 use App\Http\Controllers\DropdownController;
+
 
 
 /*
@@ -53,3 +55,6 @@ Route::post('/archive/transactions/{id}', [TransactionsController::class, 'archi
 // DROPDOWNS
 Route::get('/dropdown/categories', [DropdownController::class, 'dropdownCategories']);
 Route::get('/dropdown/books', [DropdownController::class, 'dropdownBooks']);
+
+// DASHBOARD
+Route::get('/dashboard/summary', [DashboardController::class, 'dashboardSummary']);

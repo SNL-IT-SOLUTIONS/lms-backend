@@ -18,7 +18,6 @@ class Transactions extends Model
     protected $fillable = [
         'book_id',
         'borrower_name',
-        'borrower_email',
         'borrow_date',
         'due_date',
         'return_date',

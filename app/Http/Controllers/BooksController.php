@@ -13,30 +13,53 @@ class BooksController extends Controller
     //======================
     // LIST ALL BOOKS
     //======================
-    public function listBooks()
+    public function listBooks(Request $request)
     {
         try {
-            $books = Books::where('is_archived', false)
-                ->orderBy('date_stamped', 'desc')
-                ->get()
-                ->map(function ($book) {
+            $perPage = $request->input('per_page', 10); // Default 10 per page
+            $search  = $request->input('search');
+
+            $query = Books::where('is_archived', false);
+
+            // Apply search if provided
+            if ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('title', 'like', "%{$search}%")
+                        ->orWhere('author', 'like', "%{$search}%")
+                        ->orWhere('isbn', 'like', "%{$search}%");
+                });
+            }
+
+            $books = $query->orderBy('date_stamped', 'desc')
+                ->paginate($perPage)
+                ->through(function ($book) {
                     $book->book_image = $book->book_image ? asset($book->book_image) : null;
                     return $book;
                 });
 
             return response()->json([
                 'success' => true,
-                'data'    => $books,
+                'data' => $books->items(),
+                'pagination' => [
+                    'total' => $books->total(),
+                    'per_page' => $books->perPage(),
+                    'current_page' => $books->currentPage(),
+                    'last_page' => $books->lastPage(),
+                    'from' => $books->firstItem(),
+                    'to' => $books->lastItem(),
+                ],
             ]);
         } catch (\Exception $e) {
-            Log::error('Error fetching books: ' . $e->getMessage());
+            \Log::error('Error fetching books: ' . $e->getMessage());
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to fetch books.',
-                'error'   => $e->getMessage(),
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
+
 
     //======================
     // GET BOOK BY ID

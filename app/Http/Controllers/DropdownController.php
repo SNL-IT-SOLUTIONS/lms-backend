@@ -37,8 +37,8 @@ class DropdownController extends Controller
     {
         try {
             $books = Books::where('is_archived', false)
-                ->orderBy('book_title', 'asc')
-                ->get(['book_id', 'book_title']); // only send what’s needed
+                ->orderBy('title', 'asc')
+                ->get(['book_id', 'title']); // only send what’s needed
 
             return response()->json([
                 'success' => true,

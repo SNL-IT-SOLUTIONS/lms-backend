@@ -11,18 +11,28 @@ class TransactionsController extends Controller
     /**
      * Display a listing of transactions.
      */
-    public function listTransactions()
+    public function listTransactions(Request $request)
     {
+        // Get the per-page value from query, default to 10
+        $perPage = $request->input('per_page', 10);
+
         $transactions = Transactions::with('book')
             ->orderBy('borrow_date', 'desc')
-            ->get();
+            ->paginate($perPage);
 
         return response()->json([
             'success' => true,
             'message' => 'Transactions retrieved successfully.',
-            'data'    => $transactions,
+            'data'    => $transactions->items(), // actual data for current page
+            'pagination' => [
+                'total' => $transactions->total(),
+                'per_page' => $transactions->perPage(),
+                'current_page' => $transactions->currentPage(),
+                'last_page' => $transactions->lastPage(),
+            ],
         ]);
     }
+
 
 
     /**
@@ -54,7 +64,6 @@ class TransactionsController extends Controller
         $validator = Validator::make($request->all(), [
             'book_id' => 'required|exists:books,book_id',
             'borrower_name'  => 'required|string|max:255',
-            'borrower_email' => 'required|email|max:255',
             'borrow_date'    => 'required|date',
             'due_date'       => 'required|date|after_or_equal:borrow_date',
             'return_date'    => 'nullable|date|after_or_equal:borrow_date',
