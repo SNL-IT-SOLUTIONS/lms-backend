@@ -100,11 +100,11 @@ class CategoriesController extends Controller
         }
     }
 
-    // Update a category
     public function updateCategory(Request $request, $id)
     {
         try {
             $category = Categories::find($id);
+
             if (!$category) {
                 return response()->json([
                     'success' => false,
@@ -113,7 +113,7 @@ class CategoriesController extends Controller
             }
 
             $validator = Validator::make($request->all(), [
-                'category_name'        => "required|string|unique:categories,category_name,{$id}",
+                'category_name'        => "required|string|unique:categories,category_name,{$id},category_id",
                 'category_description' => 'nullable|string',
                 'who_edited'           => 'nullable|string',
             ]);
@@ -126,19 +126,19 @@ class CategoriesController extends Controller
                 ], 422);
             }
 
-            $category->update([
-                'category_name'        => $request->category_name,
-                'category_description' => $request->category_description,
-                'who_edited'           => $request->who_edited,
-            ]);
+            // Only update fields that are present
+            $updateData = $validator->validated();
+
+            $category->update($updateData);
 
             return response()->json([
                 'success' => true,
                 'message' => 'Category updated successfully.',
-                'data'    => $category,
+                'data'    => $category->fresh(), // fetch fresh data from DB
             ]);
         } catch (\Exception $e) {
             Log::error('Error updating category: ' . $e->getMessage());
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to update category.',

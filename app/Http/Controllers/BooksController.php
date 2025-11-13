@@ -20,7 +20,7 @@ class BooksController extends Controller
             $search  = $request->input('search');
             $categoryId = $request->input('category_id');
 
-            $query = Books::where('is_archived', false);
+            $query = Books::with('category')->where('is_archived', false);
 
             // Filter by category if provided
             if ($categoryId) {
@@ -40,6 +40,8 @@ class BooksController extends Controller
                 ->paginate($perPage)
                 ->through(function ($book) {
                     $book->book_image = $book->book_image ? asset($book->book_image) : null;
+                    $book->category_name = $book->category->category_name ?? null; // add category name
+                    unset($book->category); // optional, remove full category relation if not needed
                     return $book;
                 });
 
@@ -63,6 +65,7 @@ class BooksController extends Controller
             ], 500);
         }
     }
+
 
 
 
