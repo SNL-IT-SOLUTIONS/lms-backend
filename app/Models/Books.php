@@ -25,6 +25,7 @@ class Books extends Model
         'isbn',
         'book_image',
         'ebook_link',
+        'status'
     ];
 
     // ✅ Dates for automatic casting
