@@ -20,7 +20,7 @@ use App\Http\Controllers\AuthController;
 
 //AUTH
 Route::post('/login', [AuthController::class, 'login']);
-
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
 //CATEGORIES
 Route::get('/categories', [BaseController::class, 'listCategories']);
