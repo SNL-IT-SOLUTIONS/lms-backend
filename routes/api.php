@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\BooksController;
 use App\Http\Controllers\TransactionsController;
+use App\Http\Controllers\DropdownController;
 
 
 /*
@@ -47,3 +48,8 @@ Route::get('/transactions/{id}', [TransactionsController::class, 'getTransaction
 Route::post('/create/transactions', [TransactionsController::class, 'createTransaction']);
 Route::post('/update/transactions/{id}', [TransactionsController::class, 'updateTransaction']);
 Route::post('/archive/transactions/{id}', [TransactionsController::class, 'archiveTransaction']);
+
+
+// DROPDOWNS
+Route::get('/dropdown/categories', [DropdownController::class, 'dropdownCategories']);
+Route::get('/dropdown/books', [DropdownController::class, 'dropdownBooks']);
