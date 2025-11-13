@@ -17,10 +17,13 @@ use App\Http\Controllers\AuthController;
 |
 */
 
+
+//AUTH
 Route::post('/login', [AuthController::class, 'login']);
 
 
-//example - having a middleware
-// Route::controller(BaseController::class)->middleware(['auth:sanctum'])->group(function () {
-//     Route::get('get', 'getAll')->middleware('teacher');
-// });
+//CATEGORIES
+Route::get('/categories', [BaseController::class, 'listCategories']);
+Route::get('/categories/{id}', [BaseController::class, 'getCategory']);
+Route::post('/categories', [BaseController::class, 'createCategory']);
+Route::put('/categories/{id}', [BaseController::class, 'updateCategory']);
