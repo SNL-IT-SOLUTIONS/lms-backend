@@ -31,6 +31,6 @@ class Categories extends Model
     // ✅ Relationship: A category has many books
     public function books()
     {
-        return $this->hasMany(Book::class, 'category_id', 'category_id');
+        return $this->hasMany(Books::class, 'category_id', 'category_id');
     }
 }

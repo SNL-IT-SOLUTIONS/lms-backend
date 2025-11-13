@@ -9,8 +9,7 @@ use Illuminate\Support\Facades\Log;
 
 class CategoriesController extends Controller
 {
-    // ✅ List all categories
-    // ✅ List all non-archived categories
+    // List all non-archived categories
     public function listCategories()
     {
         try {
@@ -32,7 +31,7 @@ class CategoriesController extends Controller
         }
     }
 
-    // ✅ Get single non-archived category
+    //  Get single non-archived category
     public function getCategory($id)
     {
         try {
@@ -62,7 +61,7 @@ class CategoriesController extends Controller
     }
 
 
-    // ✅ Create a new category
+    //  Create a new category
     public function createCategory(Request $request)
     {
         try {
@@ -101,7 +100,7 @@ class CategoriesController extends Controller
         }
     }
 
-    // ✅ Update a category
+    // Update a category
     public function updateCategory(Request $request, $id)
     {
         try {
@@ -148,8 +147,8 @@ class CategoriesController extends Controller
         }
     }
 
-    // ✅ Soft-delete a category
-    public function deleteCategory($id)
+    //  Soft-delete a category
+    public function archiveCategory($id)
     {
         try {
             $category = Categories::find($id);
